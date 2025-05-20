@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>RadioList</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap');
+
+    .radio-list-container {
+      position: absolute;
+      top: 40%;
+      right: 1%;
+      text-align: right;
+      padding: 10px;
+      font-family: 'Montserrat', sans-serif;
+      color: white;
+      font-size: 0.8vw;
+    }
+
+    #radio-list-header {
+      font-size: 1vw;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+      border-bottom: 2px solid white;
+      padding-bottom: 3px;
+    }
+
+    .radio-member {
+      margin: 3px 0;
+      color: rgba(255, 255, 255, 0.8);
+      text-shadow: 1px 1px 2px black;
+    }
+
+    .radio-member.talking {
+      color: rgba(244, 196, 65, 1);
+    }
+  </style>
+
+  <script type="text/javascript">
+    window.addEventListener("message", function(event) {
+      const item = event.data;
+      const radioListElem = document.getElementById("radio-list");
+
+      if (item.clearRadioList) {
+        while (radioListElem.firstChild) {
+          radioListElem.removeChild(radioListElem.firstChild);
+        }
+        return;
+      }
+
+      if (item.changeVisibility) {
+        radioListElem.style.display = item.visible ? 'block' : 'none';
+        return;
+      }
+
+      if (item.radioId != null) {
+        if (!document.getElementById("radio-list-header")) {
+          const header = document.createElement("div");
+          header.id = "radio-list-header";
+          header.textContent = "Radio Members";
+          radioListElem.appendChild(header);
+        }
+
+        if (item.radioName != null) {
+          const member = document.createElement("div");
+          member.id = "radio-list-item-" + item.radioId;
+          member.className = "radio-member";
+          member.textContent = `${item.radioName} (${item.radioId})`;
+          radioListElem.appendChild(member);
+        } else if (item.radioTalking != null) {
+          const member = document.getElementById("radio-list-item-" + item.radioId);
+          if (member) member.className = item.radioTalking ? "radio-member talking" : "radio-member";
+        } else {
+          const member = document.getElementById("radio-list-item-" + item.radioId);
+          if (member) radioListElem.removeChild(member);
+        }
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="radio-list-container" id="radio-list"></div>
+</body>
+</html>
