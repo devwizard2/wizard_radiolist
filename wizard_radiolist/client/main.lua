@@ -1,7 +1,7 @@
 local PlayerServerID = GetPlayerServerId(PlayerId())
 local PlayersInRadio = {}
 local firstTimeEventGetsTriggered = true
-local RadioChannelsName = {--[[Will Be Automatically Filled With Channels' Name => e.g. every frequency between 0 and 1 will be named to Admin Radio]]}
+local RadioChannelsName = {}
 
 RegisterNetEvent('wizard_radiolist:Client:SyncRadioChannelPlayers')
 AddEventHandler('wizard_radiolist:Client:SyncRadioChannelPlayers', function(src, RadioChannelToJoin, PlayersInRadioChannel)
@@ -13,7 +13,7 @@ AddEventHandler('wizard_radiolist:Client:SyncRadioChannelPlayers', function(src,
 				RadioChannelsName[tostring(index)] = tostring(v)
 			end
 			if frequency ~= 0 then
-				RadioChannelsName[tostring(frequency)] = tostring(v) --Fix for channels such as "1" that is not double/float like "1.0" or "1.01" !!
+				RadioChannelsName[tostring(frequency)] = tostring(v)
 			end
 		end	
 		firstTimeEventGetsTriggered = false
@@ -22,76 +22,70 @@ AddEventHandler('wizard_radiolist:Client:SyncRadioChannelPlayers', function(src,
 	if src == PlayerServerID then
 		if RadioChannelToJoin > 0 then
 			local radioChannelToJoin = tostring(RadioChannelToJoin)
-			if RadioChannelsName[radioChannelToJoin] and RadioChannelsName[radioChannelToJoin] ~= nil then -- Check if the current radioChannel had defined a name in config or not
-				HideTheRadioList() -- Hide and close the radio list in case the player was already in a different radioChannel
+			if RadioChannelsName[radioChannelToJoin] and RadioChannelsName[radioChannelToJoin] ~= nil then
+				HideTheRadioList()
 				for index, player in pairs(PlayersInRadio) do
 					if player.Source ~= src then
-						SendNUIMessage({ radioId = player.Source, radioName = player.Name, channel = RadioChannelsName[radioChannelToJoin] }) -- Add other radio members of the radio channel
+						SendNUIMessage({ radioId = player.Source, radioName = player.Name, channel = RadioChannelsName[radioChannelToJoin] })
 					else
-						SendNUIMessage({ radioId = src, radioName = player.Name, channel = RadioChannelsName[radioChannelToJoin], self = true  }) -- Add self player to radio list
+						SendNUIMessage({ radioId = src, radioName = player.Name, channel = RadioChannelsName[radioChannelToJoin], self = true  })
 					end
 					
 				end
-				ResetTheRadioList() -- Delete the PlayersInRadio contents so it opens up memory
+				ResetTheRadioList()
 			else
-				HideTheRadioList() -- Hide and close the radio list in case the player was already in a different radioChannel
+				HideTheRadioList()
 				for index, player in pairs(PlayersInRadio) do
 					if player.Source ~= src then
-						SendNUIMessage({ radioId = player.Source, radioName = player.Name, channel = radioChannelToJoin }) -- Add other radio members of the radio channel
+						SendNUIMessage({ radioId = player.Source, radioName = player.Name, channel = radioChannelToJoin })
 					else
-						SendNUIMessage({ radioId = src, radioName = player.Name, channel = radioChannelToJoin, self = true  }) -- Add self player to radio list
+						SendNUIMessage({ radioId = src, radioName = player.Name, channel = radioChannelToJoin, self = true  })
 					end
 				end
-				ResetTheRadioList() -- Delete the PlayersInRadio contents so it opens up memory
+				ResetTheRadioList()
 			end
 		else
-			ResetTheRadioList() -- Delete the PlayersInRadio contents so it opens up memory
-			HideTheRadioList() 	-- Hide and close the radio list
+			ResetTheRadioList()
+			HideTheRadioList()
 		end
 	elseif src ~= PlayerServerID then
 		if RadioChannelToJoin > 0 then
 			local radioChannelToJoin = tostring(RadioChannelToJoin)
-			if RadioChannelsName[radioChannelToJoin] and RadioChannelsName[radioChannelToJoin] ~= nil then -- Check if the current radioChannel had defined a name in config or not
-				SendNUIMessage({ radioId = src, radioName = PlayersInRadio[src].Name, channel = RadioChannelsName[radioChannelToJoin] }) -- Add player to radio list
-				ResetTheRadioList() -- Delete the PlayersInRadio contents so it opens up memory
+			if RadioChannelsName[radioChannelToJoin] and RadioChannelsName[radioChannelToJoin] ~= nil then
+				SendNUIMessage({ radioId = src, radioName = PlayersInRadio[src].Name, channel = RadioChannelsName[radioChannelToJoin] })
+				ResetTheRadioList()
 			else
-				SendNUIMessage({ radioId = src, radioName = PlayersInRadio[src].Name, channel = radioChannelToJoin }) -- Add player to radio list
+				SendNUIMessage({ radioId = src, radioName = PlayersInRadio[src].Name, channel = radioChannelToJoin })
 			end
 		else
-			SendNUIMessage({ radioId = src }) -- Remove player from radio list
+			SendNUIMessage({ radioId = src })
 		end
 	end
 	
 end)
 
---Set talkingState on radio for another radio member = true
 RegisterNetEvent('pma-voice:setTalkingOnRadio')
 AddEventHandler('pma-voice:setTalkingOnRadio', function(src, talkingState)
-	--print("Talking [{"..src.."} "..talkingState.."]")
-	SendNUIMessage({ radioId = src, radioTalking = talkingState }) -- Set player talking in radio list
+	SendNUIMessage({ radioId = src, radioTalking = talkingState })
 end)
 
---Set talkingState on radio for self = true
 RegisterNetEvent('pma-voice:radioActive')
 AddEventHandler('pma-voice:radioActive', function(talkingState)
-	--print("Talking [{"..PlayerServerID.."} "..tostring(talkingState).."]")
-	SendNUIMessage({ radioId = PlayerServerID, radioTalking = talkingState }) -- Set player talking in radio list
+	SendNUIMessage({ radioId = PlayerServerID, radioTalking = talkingState })
 end)
 
 RegisterNetEvent('wizard_radiolist:Client:DisconnectPlayerCurrentChannel')
 AddEventHandler('wizard_radiolist:Client:DisconnectPlayerCurrentChannel', function()
-	ResetTheRadioList() -- Delete the PlayersInRadio contents so it opens up memory
+	ResetTheRadioList()
 	HideTheRadioList()
 end)
 
--- Deletes the PlayersInRadio contents so it opens up memory
 function ResetTheRadioList()
 	PlayersInRadio = {}
 end
 
--- Hides and closes the radio list
 function HideTheRadioList()
-	SendNUIMessage({ clearRadioList = true }) -- Clear radio listPlayersInRadio 
+	SendNUIMessage({ clearRadioList = true })
 end
 
 if Config.LetPlayersChangeVisibilityOfRadioList then
