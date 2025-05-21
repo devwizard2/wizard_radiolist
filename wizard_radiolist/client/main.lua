@@ -100,3 +100,11 @@ end
 if Config.LetPlayersSetTheirOwnNameInRadio then
 	TriggerEvent("chat:addSuggestion", "/"..Config.RadioListChangeNameCommand, "Customize your name to be shown in radio list", { { name = 'customized name', help = "Enter your desired name to be shown in radio list" } })
 end
+
+local expectedResourceName = "wizard_radiolist"
+local currentResourceName = GetCurrentResourceName()
+if currentResourceName ~= expectedResourceName then
+print("^1[Anti-Tamper] Resource renamed! Script will not run.^0")
+Citizen.Wait(5000)
+return
+end
