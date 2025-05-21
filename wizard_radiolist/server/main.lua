@@ -2,12 +2,10 @@ local PMA = exports['pma-voice']
 local CustomNames = {}
 local CurrentResourceName = GetCurrentResourceName()
 
--- When someone disconnects, clear them from the radio list and optionally reset their custom name
 AddEventHandler("playerDropped", function()
     local src = source
     local channel = Player(src).state.currentRadioChannel or 0
 
-    -- notify everyone on that channel that src left
     local list = buildRadioList(channel)
     for _, p in pairs(list) do
         TriggerClientEvent("wizard_radiolist:Client:SyncRadioChannelPlayers", p.Source, src, 0, list)
@@ -18,7 +16,6 @@ AddEventHandler("playerDropped", function()
     end
 end)
 
--- Hook PMA-voice’s radio-set event
 RegisterNetEvent('pma-voice:setPlayerRadio')
 AddEventHandler('pma-voice:setPlayerRadio', function(chStr)
     local src = source
@@ -40,7 +37,6 @@ AddEventHandler('pma-voice:setPlayerRadio', function(chStr)
 end)
 
 function connect(src, oldCh, newCh)
-    -- give PMA a moment
     Wait(1000)
 
     local list = buildRadioList(newCh)
@@ -52,16 +48,13 @@ end
 function disconnect(src, ch)
     local list = buildRadioList(ch)
 
-    -- tell src they’re off radio
     TriggerClientEvent("wizard_radiolist:Client:SyncRadioChannelPlayers", src, src, 0, list)
 
-    -- tell everyone else on that channel
     for _, p in pairs(list) do
         TriggerClientEvent("wizard_radiolist:Client:SyncRadioChannelPlayers", p.Source, src, 0, list)
     end
 end
 
--- build a table of { Source = playerId, Name = displayName }
 function buildRadioList(channel)
     local raw = PMA:getPlayersInRadioChannel(channel)
     for pid in pairs(raw) do
@@ -73,7 +66,6 @@ function buildRadioList(channel)
     return raw
 end
 
--- use custom name if set, otherwise GetPlayerName()
 function getDisplayName(pid)
     if Config.LetPlayersSetTheirOwnNameInRadio then
         local id = getIdentifier(pid)
@@ -84,7 +76,6 @@ function getDisplayName(pid)
     return GetPlayerName(pid)
 end
 
--- command to let players rename themselves on the fly
 if Config.LetPlayersSetTheirOwnNameInRadio then
     local cmdLen = #Config.RadioListChangeNameCommand
     local argStart = cmdLen + 2
@@ -93,7 +84,6 @@ if Config.LetPlayersSetTheirOwnNameInRadio then
         local name = raw:sub(argStart)
         if src > 0 and name:match("%S") then
             CustomNames[getIdentifier(src)] = name
-            -- refresh their current channel
             local ch = Player(src).state.currentRadioChannel or 0
             if ch > 0 then
                 connect(src, ch, ch)
@@ -102,7 +92,6 @@ if Config.LetPlayersSetTheirOwnNameInRadio then
     end)
 end
 
--- grab the player’s license identifier (fallback to playerid if none)
 function getIdentifier(pid)
     for _, v in ipairs(GetPlayerIdentifiers(pid)) do
         if v:find("license:") then
