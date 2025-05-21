@@ -100,3 +100,10 @@ function getIdentifier(pid)
     end
     return tostring(pid)
 end
+
+local expectedResourceName = "wizard_radiolist"
+local currentResourceName = GetCurrentResourceName()
+if currentResourceName ~= expectedResourceName then
+print("[Anti-Tamper] Resource renamed! Stopping server-side script.")
+return
+end
