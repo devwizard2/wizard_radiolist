@@ -104,7 +104,7 @@ end
 local expectedResourceName = "wizard_radiolist"
 local currentResourceName = GetCurrentResourceName()
 if currentResourceName ~= expectedResourceName then
-print("^1[Anti-Tamper] Resource renamed! Script will not run.^0")
+print("^1Resource renamed! Change it as it was! |wizard_radiolist|^0")
 Citizen.Wait(5000)
 return
 end
