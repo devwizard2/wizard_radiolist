@@ -21,7 +21,7 @@ AddEventHandler('pma-voice:setPlayerRadio', function(chStr)
     local src = source
     local newCh = tonumber(chStr)
     if not newCh then
-        print(("radioChannelToJoin wasn’t a number, got %s"):format(type(chStr)))
+        print(("radioChannelToJoin wasnâ€™t a number, got %s"):format(type(chStr)))
         return
     end
 
