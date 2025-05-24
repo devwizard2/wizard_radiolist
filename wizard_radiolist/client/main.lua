@@ -30,7 +30,7 @@ AddEventHandler('wizard_radiolist:Client:SyncRadioChannelPlayers', function(src,
 					else
 						SendNUIMessage({ radioId = src, radioName = player.Name, channel = RadioChannelsName[radioChannelToJoin], self = true  })
 					end
-					
+
 				end
 				ResetTheRadioList()
 			else
@@ -61,7 +61,7 @@ AddEventHandler('wizard_radiolist:Client:SyncRadioChannelPlayers', function(src,
 			SendNUIMessage({ radioId = src })
 		end
 	end
-	
+
 end)
 
 RegisterNetEvent('pma-voice:setTalkingOnRadio')
@@ -93,6 +93,7 @@ if Config.LetPlayersChangeVisibilityOfRadioList then
 	RegisterCommand(Config.RadioListVisibilityCommand,function()
 		visibility = not visibility
 		SendNUIMessage({ changeVisibility = true, visible = visibility })
+		radioVisible = visibility
 	end)
 	TriggerEvent("chat:addSuggestion", "/"..Config.RadioListVisibilityCommand, "Show/Hide Radio List")
 end
@@ -108,3 +109,23 @@ print("^1Resource renamed! Change it as it was! |wizard_radiolist|^0")
 Citizen.Wait(5000)
 return
 end
+
+local pauseActive = false
+local radioVisible = true
+
+Citizen.CreateThread(function()
+    while true do
+        Citizen.Wait(300)
+        local isPaused = IsPauseMenuActive()
+
+        if isPaused and not pauseActive then
+            pauseActive = true
+            SendNUIMessage({ changeVisibility = true, visible = false })
+        elseif not isPaused and pauseActive then
+            pauseActive = false
+            if radioVisible then
+                SendNUIMessage({ changeVisibility = true, visible = true })
+            end
+        end
+    end
+end)
