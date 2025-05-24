@@ -35,48 +35,60 @@
       color: rgba(244, 196, 65, 1);
     }
   </style>
+<script>
+    window.addEventListener('message', function(event) {
+        const data = event.data;
 
-  <script type="text/javascript">
-    window.addEventListener("message", function(event) {
-      const item = event.data;
-      const radioListElem = document.getElementById("radio-list");
-
-      if (item.clearRadioList) {
-        while (radioListElem.firstChild) {
-          radioListElem.removeChild(radioListElem.firstChild);
+        if (data.action === "hideRadioList") {
+            const radioList = document.getElementById("radioList");
+            if (radioList) {
+                radioList.style.display = "none";
+            }
         }
-        return;
-      }
-
-      if (item.changeVisibility) {
-        radioListElem.style.display = item.visible ? 'block' : 'none';
-        return;
-      }
-
-      if (item.radioId != null) {
-        if (!document.getElementById("radio-list-header")) {
-          const header = document.createElement("div");
-          header.id = "radio-list-header";
-          header.textContent = "Radio Members";
-          radioListElem.appendChild(header);
-        }
-
-        if (item.radioName != null) {
-          const member = document.createElement("div");
-          member.id = "radio-list-item-" + item.radioId;
-          member.className = "radio-member";
-          member.textContent = `${item.radioName} (${item.radioId})`;
-          radioListElem.appendChild(member);
-        } else if (item.radioTalking != null) {
-          const member = document.getElementById("radio-list-item-" + item.radioId);
-          if (member) member.className = item.radioTalking ? "radio-member talking" : "radio-member";
-        } else {
-          const member = document.getElementById("radio-list-item-" + item.radioId);
-          if (member) radioListElem.removeChild(member);
-        }
-      }
     });
-  </script>
+</script>
+
+<script type="text/javascript">
+window.addEventListener("message", function(event) {
+  const item = event.data;
+  const radioListElem = document.getElementById("radio-list");
+
+  if (item.clearRadioList) {
+    while (radioListElem.firstChild) {
+      radioListElem.removeChild(radioListElem.firstChild);
+    }
+    return;
+  }
+
+  if (item.changeVisibility !== undefined) {
+    radioListElem.style.display = item.visible ? 'block' : 'none';
+    return;
+  }
+
+  if (item.radioId != null) {
+    if (!document.getElementById("radio-list-header")) {
+      const header = document.createElement("div");
+      header.id = "radio-list-header";
+      header.textContent = "Radio Members";
+      radioListElem.appendChild(header);
+    }
+
+    if (item.radioName != null) {
+      const member = document.createElement("div");
+      member.id = "radio-list-item-" + item.radioId;
+      member.className = "radio-member";
+      member.textContent = `${item.radioName} (${item.radioId})`;
+      radioListElem.appendChild(member);
+    } else if (item.radioTalking != null) {
+      const member = document.getElementById("radio-list-item-" + item.radioId);
+      if (member) member.className = item.radioTalking ? "radio-member talking" : "radio-member";
+    } else {
+      const member = document.getElementById("radio-list-item-" + item.radioId);
+      if (member) radioListElem.removeChild(member);
+    }
+  }
+});
+</script>
 </head>
 <body>
   <div class="radio-list-container" id="radio-list"></div>
