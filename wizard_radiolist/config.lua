@@ -1,13 +1,11 @@
 Config = {}
 
-Config.UseRPName = true 							-- If set to true, it uses either esx-legacy or qb-core built-in function to get players' RP name
-
-Config.LetPlayersChangeVisibilityOfRadioList = true	-- Let players to toggle visibility of the list
-Config.RadioListVisibilityCommand = "radiolist" 	-- Only works if Config.LetPlayersChangeVisibilityOfRadioList is set to true
-
-Config.LetPlayersSetTheirOwnNameInRadio = true		-- Let players to customize how their name is displayed on the list
-Config.ResetPlayersCustomizedNameOnExit = true		-- Only works if Config.LetPlayersSetTheirOwnNameInRadio is set to true - Removes customized name players set for themselves on their server exit
-Config.RadioListChangeNameCommand = "nameinradio" 	-- Only works if Config.LetPlayersSetTheirOwnNameInRadio is set to true
+Config.UseRPName = true
+Config.LetPlayersChangeVisibilityOfRadioList = true
+Config.RadioListVisibilityCommand = "radiolist"
+Config.LetPlayersSetTheirOwnNameInRadio = true
+Config.ResetPlayersCustomizedNameOnExit = true
+Config.RadioListChangeNameCommand = "nameinradio"
 
 Config.RadioChannelsWithName = {
 	["0"] = "Admin",
